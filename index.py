@@ -204,6 +204,6 @@ def generate_html(offers, image_folder="bilder", video_file="video.mp4"):
 if __name__ == "__main__":
     offers = scrape_spar_offers()
     html = generate_html(offers)
-    with open("ukens_tilbud.html", "w", encoding="utf-8") as f:
+    with open("index.html", "w", encoding="utf-8") as f:
         f.write(html)
-    print("✅ HTML-side generert: ukens_tilbud.html")
+    print("✅ HTML-side generert: index.html")
