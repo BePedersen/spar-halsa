@@ -5,7 +5,12 @@
     <title>SPAR-Visning</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        html, body { width: 100%; height: 100%; overflow: hidden; font-family: 'Helvetica Neue', sans-serif; }
+        html, body {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            font-family: 'Helvetica Neue', sans-serif;
+        }
         .section {
             width: 100%;
             height: 100vh;
@@ -15,6 +20,10 @@
             transition: opacity 1s ease-in-out;
             opacity: 0;
             pointer-events: none;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
         }
         .active {
             opacity: 1;
@@ -22,42 +31,56 @@
             z-index: 1;
         }
         .carousel-container {
-            overflow: hidden;
-            width: 90%;
-            max-width: 1000px;
-            margin: 40px auto;
-            background: white;
-            border-radius: 10px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
         .carousel-track {
             display: flex;
             transition: transform 0.5s ease-in-out;
+            width: 100%;
+            height: 100%;
         }
         .slide {
             display: flex;
-            justify-content: space-around;
+            justify-content: center;
+            align-items: center;
             flex: 0 0 100%;
-            padding: 20px;
+            height: 100%;
+            gap: 4vw;
+            padding: 0 5vw;
         }
         .offer {
-            width: 45%;
+            width: 40%;
+            height: 85%;
             background: #ffffff;
-            border-radius: 10px;
+            border-radius: 20px;
             text-align: center;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            padding: 10px;
+            box-shadow: 0 6px 15px rgba(0,0,0,0.15);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
         }
         .offer img {
-            max-width: 100%;
-            height: auto;
-            border-radius: 10px;
+            max-height: 55vh;
+            object-fit: contain;
+            border-radius: 15px;
         }
-        .offer h2 { font-size: 1.2em; color: #333; }
-        .offer p { color: #666; }
+        .offer h2 {
+            font-size: 4em;
+            margin: 10px 0 5px 0;
+            color: #333;
+        }
+        .offer p {
+            font-size: 1.8em;
+            color: #666;
+            margin: 0;
+        }
         .offer strong {
-            display: block;
-            font-size: 1.5em;
+            font-size: 8em;
             color: #d00000;
             margin-top: 10px;
         }
@@ -67,11 +90,10 @@
             object-fit: cover;
         }
         .gallery-section {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-direction: column;
             background: #f5f5f5;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
         }
         .gallery img {
             max-height: 80vh;
@@ -79,12 +101,21 @@
             border-radius: 10px;
             box-shadow: 0 2px 8px rgba(0,0,0,0.1);
         }
+        h1 {
+            position: absolute;
+            top: 20px;
+            width: 100%;
+            text-align: center;
+            color: #d00000;
+            font-size: 3em;
+        }
     </style>
 </head>
 <body>
-    <!-- Seksjon 1: Karusell -->
+
+    <!-- Seksjon 1: Tilbud -->
     <div class="section active" id="section1">
-        <h1 style="text-align:center; padding-top: 30px; color: #d00000;">Ukens tilbud</h1>
+        <h1>Ukens tilbud</h1>
         <div class="carousel-container">
             <div class="carousel-track" id="carouselTrack">
     <div class="slide">
@@ -109,14 +140,14 @@
                     <img src="https://res.cloudinary.com/norgesgruppen/image/upload/c_fill,f_jpg,h_318,q_auto:eco,w_424/xk30o9zgae6mi0cyid8g.jpg" alt="Jordbær">
                     <h2>Jordbær</h2>
                     <p>Eat Me, Nederland, 500 g</p>
-                    <strong>2 for 59 90</strong>
+                    <strong>2 for 59,90</strong>
                 </div>
                 
                 <div class="offer">
                     <img src="https://res.cloudinary.com/norgesgruppen/image/upload/c_fill,f_jpg,h_318,q_auto:eco,w_424/sxcz4ybgtk9pml5blvli.jpg" alt="Mandelpotet">
                     <h2>Mandelpotet</h2>
                     <p>Gartner, 2 kg</p>
-                    <strong>34 90</strong>
+                    <strong>34,90</strong>
                 </div>
                 </div>
 <div class="slide">
@@ -141,7 +172,7 @@
                     <img src="https://res.cloudinary.com/norgesgruppen/image/upload/c_fill,f_jpg,h_318,q_auto:eco,w_424/qdqczl9bt5h6djnyzg0j.jpg" alt="Biff-/kyllingburger">
                     <h2>Biff-/kyllingburger</h2>
                     <p>100–120 g, pr. stk. Fra vårt varmeskap</p>
-                    <strong>59 90</strong>
+                    <strong>59,90</strong>
                 </div>
                 </div>
 
@@ -154,40 +185,35 @@
         <video src="video.mp4" autoplay muted loop></video>
     </div>
 
-    <!-- Seksjon 3: Bildegalleri -->
+    <!-- Seksjon 3: Galleri -->
     <div class="section gallery-section" id="section3">
         <div class="gallery">
-            <img src="bilder/bilde1.jpg" alt="bilde1.jpg">
-
+            
         </div>
     </div>
 
     <script>
-    // Karusell (ukens tilbud)
-    const track = document.getElementById('carouselTrack');
-    const slides = document.querySelectorAll('.slide');
-    let slideIndex = 0;
-    setInterval(() => {
-        slideIndex = (slideIndex + 1) % slides.length;
-        track.style.transform = `translateX(-${slideIndex * 100}%)`;
-    }, 4000);
+        // Karusell
+        const track = document.getElementById('carouselTrack');
+        const slides = document.querySelectorAll('.slide');
+        let slideIndex = 0;
+        setInterval(() => {
+            slideIndex = (slideIndex + 1) % slides.length;
+            track.style.transform = `translateX(-${slideIndex * 100}%)`;
+        }, 4000);
 
-    // Ruller gjennom: tilbud → bilder → video → bilder → ...
-    const s1 = document.getElementById('section1'); // tilbud
-    const s2 = document.getElementById('section2'); // video
-    const s3 = document.getElementById('section3'); // bilder
+        // Roter: tilbud → bilde → video → bilde → ...
+        const s1 = document.getElementById('section1');
+        const s2 = document.getElementById('section2');
+        const s3 = document.getElementById('section3');
+        const rotationOrder = [s1, s3, s2, s3];
+        let sectionIndex = 0;
 
-    const rotationOrder = [s1, s3, s2, s3]; // ønsket rotasjonsrekkefølge
-    let sectionIndex = 0;
-
-    setInterval(() => {
-        // Skjul alle
-        [s1, s2, s3].forEach(s => s.classList.remove('active'));
-        // Vis gjeldende
-        rotationOrder[sectionIndex].classList.add('active');
-        // Neste
-        sectionIndex = (sectionIndex + 1) % rotationOrder.length;
-    }, 8000); // endre her hvis du vil ha tregere/raskere bytte
-</script>
+        setInterval(() => {
+            [s1, s2, s3].forEach(s => s.classList.remove('active'));
+            rotationOrder[sectionIndex].classList.add('active');
+            sectionIndex = (sectionIndex + 1) % rotationOrder.length;
+        }, 12000);
+    </script>
 </body>
 </html>
