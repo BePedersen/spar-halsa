@@ -21,7 +21,18 @@ def scrape_spar_offers():
         price_parts = p.select(".product__price")
         image = p.select_one("img")
 
-        price = " ".join([part.get_text(strip=True) for part in price_parts])
+        # Formater pris
+        raw_parts = [part.get_text(strip=True) for part in price_parts]
+        if "for" in raw_parts:
+            idx = raw_parts.index("for")
+            if idx + 2 < len(raw_parts):
+                price = f"{raw_parts[0]} for {raw_parts[idx + 1]},{raw_parts[idx + 2]}"
+            else:
+                price = " ".join(raw_parts)
+        elif len(raw_parts) >= 2 and raw_parts[0].isdigit() and raw_parts[1].isdigit():
+            price = f"{raw_parts[0]},{raw_parts[1]}"
+        else:
+            price = " ".join(raw_parts)
 
         offers.append({
             "title": title.get_text(strip=True) if title else "",
@@ -33,8 +44,6 @@ def scrape_spar_offers():
     return offers
 
 def generate_html(offers, image_folder="bilder", video_file="video.mp4"):
-    import os
-
     image_tags = ""
     if os.path.exists(image_folder):
         for img_file in os.listdir(image_folder):
@@ -51,128 +60,122 @@ def generate_html(offers, image_folder="bilder", video_file="video.mp4"):
     <meta charset="UTF-8">
     <title>SPAR-Visning</title>
     <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    html, body {
-        width: 100%;
-        height: 100%;
-        overflow: hidden;
-        font-family: 'Helvetica Neue', sans-serif;
-    }
-
-    .section {
-        width: 100%;
-        height: 100vh;
-        position: absolute;
-        top: 0;
-        left: 0;
-        transition: opacity 1s ease-in-out;
-        opacity: 0;
-        pointer-events: none;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-    }
-
-    .active {
-        opacity: 1;
-        pointer-events: auto;
-        z-index: 1;
-    }
-
-    /* Tilbud-karusell */
-    .carousel-container {
-        width: 100%;
-        height: 100%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-
-    .carousel-track {
-        display: flex;
-        transition: transform 0.5s ease-in-out;
-        width: 100%;
-        height: 100%;
-    }
-
-    .slide {
-        display: flex;
-        justify-content: space-evenly;
-        align-items: center;
-        flex: 0 0 100%;
-        height: 100%;
-        padding: 40px;
-    }
-
-    .offer {
-        width: 30%;
-        background: #ffffff;
-        border-radius: 15px;
-        text-align: center;
-        box-shadow: 0 4px 10px rgba(0,0,0,0.15);
-        padding: 20px;
-    }
-
-    .offer img {
-        max-width: 100%;
-        max-height: 50vh;
-        height: auto;
-        border-radius: 10px;
-    }
-
-    .offer h2 { font-size: 1.5em; color: #333; margin-top: 10px; }
-    .offer p { color: #666; margin: 5px 0; }
-    .offer strong {
-        display: block;
-        font-size: 1.8em;
-        color: #d00000;
-        margin-top: 10px;
-    }
-
-    /* Video */
-    .video-section video {
-        width: 100%;
-        height: 100vh;
-        object-fit: cover;
-    }
-
-    /* Galleri */
-    .gallery-section {
-        background: #f5f5f5;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-    }
-
-    .gallery img {
-        max-height: 80vh;
-        margin: 20px;
-        border-radius: 10px;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    }
-
-    h1 {
-        position: absolute;
-        top: 30px;
-        width: 100%;
-        text-align: center;
-        color: #d00000;
-        font-size: 3em;
-    }
+        * {{ margin: 0; padding: 0; box-sizing: border-box; }}
+        html, body {{
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            font-family: 'Helvetica Neue', sans-serif;
+        }}
+        .section {{
+            width: 100%;
+            height: 100vh;
+            position: absolute;
+            top: 0;
+            left: 0;
+            transition: opacity 1s ease-in-out;
+            opacity: 0;
+            pointer-events: none;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }}
+        .active {{
+            opacity: 1;
+            pointer-events: auto;
+            z-index: 1;
+        }}
+        .carousel-container {{
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }}
+        .carousel-track {{
+            display: flex;
+            transition: transform 0.5s ease-in-out;
+            width: 100%;
+            height: 100%;
+        }}
+        .slide {{
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex: 0 0 100%;
+            height: 100%;
+            gap: 4vw;
+            padding: 0 5vw;
+        }}
+        .offer {{
+            width: 40%;
+            height: 85%;
+            background: #ffffff;
+            border-radius: 20px;
+            text-align: center;
+            box-shadow: 0 6px 15px rgba(0,0,0,0.15);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }}
+        .offer img {{
+            max-height: 55vh;
+            object-fit: contain;
+            border-radius: 15px;
+        }}
+        .offer h2 {{
+            font-size: 4em;
+            margin: 10px 0 5px 0;
+            color: #333;
+        }}
+        .offer p {{
+            font-size: 1.8em;
+            color: #666;
+            margin: 0;
+        }}
+        .offer strong {{
+            font-size: 8em;
+            color: #d00000;
+            margin-top: 10px;
+        }}
+        .video-section video {{
+            width: 100%;
+            height: 100vh;
+            object-fit: cover;
+        }}
+        .gallery-section {{
+            background: #f5f5f5;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }}
+        .gallery img {{
+            max-height: 80vh;
+            margin: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }}
+        h1 {{
+            position: absolute;
+            top: 20px;
+            width: 100%;
+            text-align: center;
+            color: #d00000;
+            font-size: 3em;
+        }}
     </style>
-    
-      
 </head>
 <body>
-    <!-- Seksjon 1: Karusell -->
+
+    <!-- Seksjon 1: Tilbud -->
     <div class="section active" id="section1">
-        <h1 style="text-align:center; padding-top: 30px; color: #d00000;">Ukens tilbud</h1>
+        <h1>Ukens tilbud</h1>
         <div class="carousel-container">
             <div class="carousel-track" id="carouselTrack">
     """
 
-    # Legg til slides (2 og 2)
     for i in range(0, len(offers), 2):
         html += '<div class="slide">\n'
         for j in range(2):
@@ -188,50 +191,46 @@ def generate_html(offers, image_folder="bilder", video_file="video.mp4"):
                 """
         html += '</div>\n'
 
-    html += """
+    html += f"""
             </div>
         </div>
     </div>
 
     <!-- Seksjon 2: Video -->
     <div class="section video-section" id="section2">
-        """ + video_tag + """
+        {video_tag}
     </div>
 
-    <!-- Seksjon 3: Bildegalleri -->
+    <!-- Seksjon 3: Galleri -->
     <div class="section gallery-section" id="section3">
         <div class="gallery">
-            """ + image_tags + """
+            {image_tags}
         </div>
     </div>
 
     <script>
-    // Karusell (ukens tilbud)
-    const track = document.getElementById('carouselTrack');
-    const slides = document.querySelectorAll('.slide');
-    let slideIndex = 0;
-    setInterval(() => {
-        slideIndex = (slideIndex + 1) % slides.length;
-        track.style.transform = `translateX(-${slideIndex * 100}%)`;
-    }, 4000);
+        // Karusell
+        const track = document.getElementById('carouselTrack');
+        const slides = document.querySelectorAll('.slide');
+        let slideIndex = 0;
+        setInterval(() => {{
+            slideIndex = (slideIndex + 1) % slides.length;
+            track.style.transform = `translateX(-${{slideIndex * 100}}%)`;
+        }}, 4000);
 
-    // Ruller gjennom: tilbud → bilder → video → bilder → ...
-    const s1 = document.getElementById('section1'); // tilbud
-    const s2 = document.getElementById('section2'); // video
-    const s3 = document.getElementById('section3'); // bilder
+        // Roter: tilbud → bilde → video → bilde → ...
+        const s1 = document.getElementById('section1');
+        const s2 = document.getElementById('section2');
+        const s3 = document.getElementById('section3');
+        const rotationOrder = [s1, s3, s2, s3];
+        let sectionIndex = 0;
 
-    const rotationOrder = [s1, s3, s2, s3]; // ønsket rotasjonsrekkefølge
-    let sectionIndex = 0;
-
-    setInterval(() => {
-        // Skjul alle
-        [s1, s2, s3].forEach(s => s.classList.remove('active'));
-        // Vis gjeldende
-        rotationOrder[sectionIndex].classList.add('active');
-        // Neste
-        sectionIndex = (sectionIndex + 1) % rotationOrder.length;
-    }, 8000); // endre her hvis du vil ha tregere/raskere bytte
-</script>
+        setInterval(() => {{
+            [s1, s2, s3].forEach(s => s.classList.remove('active'));
+            rotationOrder[sectionIndex].classList.add('active');
+            sectionIndex = (sectionIndex + 1) % rotationOrder.length;
+        }}, 12000);
+    </script>
 </body>
 </html>
 """
