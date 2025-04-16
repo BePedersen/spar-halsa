@@ -51,82 +51,118 @@ def generate_html(offers, image_folder="bilder", video_file="video.mp4"):
     <meta charset="UTF-8">
     <title>SPAR-Visning</title>
     <style>
-        * {{ margin: 0; padding: 0; box-sizing: border-box; }}
-        html, body {{ width: 100%; height: 100%; overflow: hidden; font-family: 'Helvetica Neue', sans-serif; }}
-        .section {{
-            width: 100%;
-            height: 100vh;
-            position: absolute;
-            top: 0;
-            left: 0;
-            transition: opacity 1s ease-in-out;
-            opacity: 0;
-            pointer-events: none;
-        }}
-        .active {{
-            opacity: 1;
-            pointer-events: auto;
-            z-index: 1;
-        }}
-        .carousel-container {{
-            overflow: hidden;
-            width: 90%;
-            max-width: 1000px;
-            margin: 40px auto;
-            background: white;
-            border-radius: 10px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        }}
-        .carousel-track {{
-            display: flex;
-            transition: transform 0.5s ease-in-out;
-        }}
-        .slide {{
-            display: flex;
-            justify-content: space-around;
-            flex: 0 0 100%;
-            padding: 20px;
-        }}
-        .offer {{
-            width: 45%;
-            background: #ffffff;
-            border-radius: 10px;
-            text-align: center;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            padding: 10px;
-        }}
-        .offer img {{
-            max-width: 100%;
-            height: auto;
-            border-radius: 10px;
-        }}
-        .offer h2 {{ font-size: 1.2em; color: #333; }}
-        .offer p {{ color: #666; }}
-        .offer strong {{
-            display: block;
-            font-size: 1.5em;
-            color: #d00000;
-            margin-top: 10px;
-        }}
-        .video-section video {{
-            width: 100%;
-            height: 100vh;
-            object-fit: cover;
-        }}
-        .gallery-section {{
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-direction: column;
-            background: #f5f5f5;
-        }}
-        .gallery img {{
-            max-height: 80vh;
-            margin: 20px;
-            border-radius: 10px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        }}
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body {
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        font-family: 'Helvetica Neue', sans-serif;
+    }
+
+    .section {
+        width: 100%;
+        height: 100vh;
+        position: absolute;
+        top: 0;
+        left: 0;
+        transition: opacity 1s ease-in-out;
+        opacity: 0;
+        pointer-events: none;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .active {
+        opacity: 1;
+        pointer-events: auto;
+        z-index: 1;
+    }
+
+    /* Tilbud-karusell */
+    .carousel-container {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .carousel-track {
+        display: flex;
+        transition: transform 0.5s ease-in-out;
+        width: 100%;
+        height: 100%;
+    }
+
+    .slide {
+        display: flex;
+        justify-content: space-evenly;
+        align-items: center;
+        flex: 0 0 100%;
+        height: 100%;
+        padding: 40px;
+    }
+
+    .offer {
+        width: 30%;
+        background: #ffffff;
+        border-radius: 15px;
+        text-align: center;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+        padding: 20px;
+    }
+
+    .offer img {
+        max-width: 100%;
+        max-height: 50vh;
+        height: auto;
+        border-radius: 10px;
+    }
+
+    .offer h2 { font-size: 1.5em; color: #333; margin-top: 10px; }
+    .offer p { color: #666; margin: 5px 0; }
+    .offer strong {
+        display: block;
+        font-size: 1.8em;
+        color: #d00000;
+        margin-top: 10px;
+    }
+
+    /* Video */
+    .video-section video {
+        width: 100%;
+        height: 100vh;
+        object-fit: cover;
+    }
+
+    /* Galleri */
+    .gallery-section {
+        background: #f5f5f5;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .gallery img {
+        max-height: 80vh;
+        margin: 20px;
+        border-radius: 10px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    h1 {
+        position: absolute;
+        top: 30px;
+        width: 100%;
+        text-align: center;
+        color: #d00000;
+        font-size: 3em;
+    }
     </style>
+    
+      
 </head>
 <body>
     <!-- Seksjon 1: Karusell -->
