@@ -2,12 +2,13 @@ name: Update site every 2 hours
 
 on:
   schedule:
-    - cron: '*/180 * * * *'
+    - cron: '0 */2 * * *'  # every 2nd hour
   workflow_dispatch:
 
 jobs:
   update:
     runs-on: ubuntu-latest
+
     steps:
     - name: Checkout repo
       uses: actions/checkout@v3
@@ -18,9 +19,11 @@ jobs:
         python-version: '3.10'
 
     - name: Install dependencies
-      run: pip install -r requirements.txt
+      run: |
+        pip install -r requirements.txt
+        python -m playwright install
 
-    - name: Run map generator
+    - name: Run SPAR scraper
       run: python index.py
 
     - name: Commit and push changes
@@ -28,5 +31,5 @@ jobs:
         git config user.name "github-actions"
         git config user.email "github-actions@github.com"
         git add index.html
-        git commit -m "Automated map update" || echo "No changes"
+        git diff --cached --quiet || git commit -m "Update site with new data"
         git push
