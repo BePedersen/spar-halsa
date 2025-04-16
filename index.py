@@ -43,7 +43,7 @@ def scrape_spar_offers():
 
     return offers
 
-def generate_html(offers, image_folder="bilder", video_file="video.mp4"):
+def generate_html(offers, image_folder="Bilder", video_file="video.mp4"):
     image_tags = ""
     if os.path.exists(image_folder):
         for img_file in os.listdir(image_folder):
