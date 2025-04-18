@@ -229,7 +229,7 @@ def generate_html(offers, image_folder="bilder", video_file="video.mp4"):
             [s1, s2, s3].forEach(s => s.classList.remove('active'));
             rotationOrder[sectionIndex].classList.add('active');
             sectionIndex = (sectionIndex + 1) % rotationOrder.length;
-        }}, 12000);
+        }}, 8000);
     </script>
 </body>
 </html>
