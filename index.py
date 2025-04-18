@@ -58,7 +58,7 @@ def generate_html(offers, image_folder="bilder", video_file="video.mp4"):
 <html lang="no">
 <head>
     <meta charset="UTF-8">
-    <meta http.equiv="refresh" content="60">
+    <meta http.equiv="refresh" content="300">
     <title>SPAR-Visning</title>
     <style>
         * {{ margin: 0; padding: 0; box-sizing: border-box; }}
