@@ -49,6 +49,8 @@ def scrape_spar_offers():
     return offers
 
 def generate_html(offers, image_folder="bilder", video_file="video.mp4"):
+    import os
+
     image_tags = ""
     if os.path.exists(image_folder):
         for img_file in os.listdir(image_folder):
@@ -63,7 +65,7 @@ def generate_html(offers, image_folder="bilder", video_file="video.mp4"):
 <html lang="no">
 <head>
     <meta charset="UTF-8">
-    <meta http.equiv="refresh" content="300">
+    <meta http-equiv="refresh" content="300">
     <title>SPAR-Visning</title>
     <style>
         * {{ margin: 0; padding: 0; box-sizing: border-box; }}
@@ -158,6 +160,7 @@ def generate_html(offers, image_folder="bilder", video_file="video.mp4"):
             align-items: center;
         }}
         .gallery img {{
+            display: none;
             max-height: 80vh;
             margin: 20px;
             border-radius: 10px;
@@ -224,7 +227,7 @@ def generate_html(offers, image_folder="bilder", video_file="video.mp4"):
             track.style.transform = `translateX(-${{slideIndex * 100}}%)`;
         }}, 4000);
 
-        // Roter: tilbud → bilde → video → bilde → ...
+        // Seksjonsrotasjon
         const s1 = document.getElementById('section1');
         const s2 = document.getElementById('section2');
         const s3 = document.getElementById('section3');
@@ -236,6 +239,22 @@ def generate_html(offers, image_folder="bilder", video_file="video.mp4"):
             rotationOrder[sectionIndex].classList.add('active');
             sectionIndex = (sectionIndex + 1) % rotationOrder.length;
         }}, 8000);
+
+        // Galleri: roter ett og ett bilde
+        const galleryImages = document.querySelectorAll('.gallery img');
+        let galleryIndex = 0;
+
+        function rotateGalleryImage() {{
+            galleryImages.forEach((img, idx) => {{
+                img.style.display = (idx === galleryIndex) ? 'block' : 'none';
+            }});
+            galleryIndex = (galleryIndex + 1) % galleryImages.length;
+        }}
+
+        if (galleryImages.length > 0) {{
+            rotateGalleryImage();
+            setInterval(rotateGalleryImage, 4000);
+        }}
     </script>
 </body>
 </html>
