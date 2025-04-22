@@ -115,68 +115,106 @@
 </head>
 <body>
 
-    <!-- Seksjon 1: Tilbud -->
-    <div class="section active" id="section1">
-        <h1>Ukens tilbud</h1>
-        <div class="carousel-container">
-            <div class="carousel-track" id="carouselTrack">
-    
-            </div>
+<div class="section active" id="section1">
+    <h1>Ukens tilbud</h1>
+    <div class="carousel-container">
+        <div class="carousel-track" id="carouselTrack">
+<div class="slide">
+
+                <div class="offer">
+                    <img src="https://res.cloudinary.com/norgesgruppen/image/upload/c_fill,f_jpg,h_318,q_auto:eco,w_424/mhhcgg9wwevxtcxyhuhr.jpg" alt="Norvegia">
+                    <h2>Norvegia</h2>
+                    <p>TINE, original/smaksrik, 830 g Førpris: 132,00–162,00</p>
+                    <strong>79,90</strong>
+                </div>
+                
+                <div class="offer">
+                    <img src="https://res.cloudinary.com/norgesgruppen/image/upload/c_fill,f_jpg,h_318,q_auto:eco,w_424/gt2cwtkkag56ts0dozhv.jpg" alt="Jif">
+                    <h2>Jif</h2>
+                    <p>et stort utvalg</p>
+                    <strong>-40,%</strong>
+                </div>
+                </div>
+<div class="slide">
+
+                <div class="offer">
+                    <img src="https://res.cloudinary.com/norgesgruppen/image/upload/c_fill,f_jpg,h_318,q_auto:eco,w_424/ulektixilvalvyrsow3h.jpg" alt="Norske tomater">
+                    <h2>Norske tomater</h2>
+                    <p>løsvekt, pr. kg</p>
+                    <strong>29,90</strong>
+                </div>
+                
+                <div class="offer">
+                    <img src="https://res.cloudinary.com/norgesgruppen/image/upload/c_fill,f_jpg,h_318,q_auto:eco,w_424/zupblqisonjvglnxtvvw.jpg" alt="Italiensk uke">
+                    <h2>Italiensk uke</h2>
+                    <p>et stort utvalg</p>
+                    <strong>-40,%</strong>
+                </div>
+                </div>
+<div class="slide">
+
+                <div class="offer">
+                    <img src="https://res.cloudinary.com/norgesgruppen/image/upload/c_fill,f_jpg,h_318,q_auto:eco,w_424/x6ktxn2hmlxu7e74pt2l.jpg" alt="Nygrillede kyllinglår">
+                    <h2>Nygrillede kyllinglår</h2>
+                    <p>pr. stk. Førpris: 34,90 Fra vårt varmeskap</p>
+                    <strong>19,90</strong>
+                </div>
+                </div>
+
         </div>
     </div>
+</div>
 
-    <!-- Seksjon 2: Video -->
-    <div class="section video-section" id="section2">
-        <video src="video.mp4" autoplay muted loop></video>
+<div class="section video-section" id="section2">
+    <video src="video.mp4" autoplay muted loop></video>
+</div>
+
+<div class="section gallery-section" id="section3">
+    <div class="gallery">
+        <img class="gallery-image" src="bilder/bilde1.jpg" alt="bilde1.jpg" style="display: none;">
+<img class="gallery-image" src="bilder/bilde2.jpg" alt="bilde2.jpg" style="display: none;">
+
     </div>
+</div>
 
-    <!-- Seksjon 3: Galleri -->
-    <div class="section gallery-section" id="section3">
-        <div class="gallery">
-            <img src="bilder/bilde2.jpg" alt="bilde2.jpg">
-<img src="bilder/bilde1.jpg" alt="bilde1.jpg">
+<script>
+window.onload = function () {
+    const track = document.getElementById('carouselTrack');
+    const slides = document.querySelectorAll('.slide');
+    let slideIndex = 0;
 
-        </div>
-    </div>
+    setInterval(() => {
+        slideIndex = (slideIndex + 1) % slides.length;
+        track.style.transform = `translateX(-${slideIndex * 100}%)`;
+    }, 4000);
 
-    <script>
-        // Karusell
-        const track = document.getElementById('carouselTrack');
-        const slides = document.querySelectorAll('.slide');
-        let slideIndex = 0;
-        setInterval(() => {
-            slideIndex = (slideIndex + 1) % slides.length;
-            track.style.transform = `translateX(-${slideIndex * 100}%)`;
-        }, 4000);
+    const s1 = document.getElementById('section1');
+    const s2 = document.getElementById('section2');
+    const s3 = document.getElementById('section3');
+    const rotationOrder = [s1, s3, s2, s3];
+    let sectionIndex = 0;
 
-        // Seksjonsrotasjon
-        const s1 = document.getElementById('section1');
-        const s2 = document.getElementById('section2');
-        const s3 = document.getElementById('section3');
-        const rotationOrder = [s1, s3, s2, s3];
-        let sectionIndex = 0;
+    const galleryImages = document.querySelectorAll('.gallery-image');
 
-        setInterval(() => {
-            [s1, s2, s3].forEach(s => s.classList.remove('active'));
-            rotationOrder[sectionIndex].classList.add('active');
-            sectionIndex = (sectionIndex + 1) % rotationOrder.length;
-        }, 8000);
+    function showRandomGalleryImage() {
+        galleryImages.forEach(img => img.style.display = 'none');
+        const rand = Math.floor(Math.random() * galleryImages.length);
+        galleryImages[rand].style.display = 'block';
+    }
 
-        // Galleri: roter ett og ett bilde
-        const galleryImages = document.querySelectorAll('.gallery img');
-        let galleryIndex = 0;
+    setInterval(() => {
+        [s1, s2, s3].forEach(s => s.classList.remove('active'));
+        const currentSection = rotationOrder[sectionIndex];
+        currentSection.classList.add('active');
 
-        function rotateGalleryImage() {
-            galleryImages.forEach((img, idx) => {
-                img.style.display = (idx === galleryIndex) ? 'block' : 'none';
-            });
-            galleryIndex = (galleryIndex + 1) % galleryImages.length;
+        if (currentSection === s3 && galleryImages.length > 0) {
+            showRandomGalleryImage();
         }
 
-        if (galleryImages.length > 0) {
-            rotateGalleryImage();
-            setInterval(rotateGalleryImage, 4000);
-        }
-    </script>
+        sectionIndex = (sectionIndex + 1) % rotationOrder.length;
+    }, 8000);
+}
+</script>
+
 </body>
 </html>

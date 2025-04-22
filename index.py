@@ -9,35 +9,35 @@ def scrape_spar_offers():
         page.goto("https://spar.no", wait_until="load")
 
         try:
-            page.wait_for_selector(".product__carousel--container--visible", timeout=15000)
-        except:
+            page.wait_for_selector(".product__carousel-container-visible .product", timeout=15000)
+        except Exception as e:
+            print(f"⚠️ Selector not found or timed out: {e}")
             page.screenshot(path="error_screenshot.png")
-            print("⚠️ Selector not found — saved screenshot for debugging.")
+            with open("debug.html", "w", encoding="utf-8") as f:
+                f.write(page.content())
+            browser.close()
             return []
 
+        html = page.content()
+        browser.close()
 
     soup = BeautifulSoup(html, "html.parser")
     offers = []
 
-    products = soup.select(".product__carousel-container .product")
+    products = soup.select(".product__carousel-container-visible .product")
+
     for p in products:
         title = p.select_one(".product__text--header")
         description = p.select_one(".product__text--sub-text")
-        price_parts = p.select(".product__price")
-        image = p.select_one("img")
+        image = p.select_one(".product__image img")
 
-        # Formater pris
-        raw_parts = [part.get_text(strip=True) for part in price_parts]
-        if "for" in raw_parts:
-            idx = raw_parts.index("for")
-            if idx + 2 < len(raw_parts):
-                price = f"{raw_parts[0]} for {raw_parts[idx + 1]},{raw_parts[idx + 2]}"
-            else:
-                price = " ".join(raw_parts)
-        elif len(raw_parts) >= 2 and raw_parts[0].isdigit() and raw_parts[1].isdigit():
-            price = f"{raw_parts[0]},{raw_parts[1]}"
+        price_main = p.select_one(".product__price:not(.product__price--sup)")
+        price_sup = p.select_one(".product__price--sup")
+
+        if price_main and price_sup:
+            price = f"{price_main.get_text(strip=True)},{price_sup.get_text(strip=True)}"
         else:
-            price = " ".join(raw_parts)
+            price = (price_main or price_sup or "").get_text(strip=True)
 
         offers.append({
             "title": title.get_text(strip=True) if title else "",
@@ -46,20 +46,17 @@ def scrape_spar_offers():
             "image": image["src"] if image and image.has_attr("src") else ""
         })
 
+    print(f"📦 Found {len(offers)} offers.")
     return offers
 
 def generate_html(offers, image_folder="bilder", video_file="video.mp4"):
-    import os
-
     image_tags = ""
     if os.path.exists(image_folder):
         for img_file in os.listdir(image_folder):
             if img_file.lower().endswith(".jpg"):
-                image_tags += f'<img src="{image_folder}/{img_file}" alt="{img_file}">\n'
+                image_tags += f'<img class="gallery-image" src="{image_folder}/{img_file}" alt="{img_file}" style="display: none;">\n'
 
-    video_tag = ""
-    if os.path.exists(video_file):
-        video_tag = f'<video src="{video_file}" autoplay muted loop></video>'
+    video_tag = f'<video src="{video_file}" autoplay muted loop></video>' if os.path.exists(video_file) else ""
 
     html = f"""<!DOCTYPE html>
 <html lang="no">
@@ -178,12 +175,11 @@ def generate_html(offers, image_folder="bilder", video_file="video.mp4"):
 </head>
 <body>
 
-    <!-- Seksjon 1: Tilbud -->
-    <div class="section active" id="section1">
-        <h1>Ukens tilbud</h1>
-        <div class="carousel-container">
-            <div class="carousel-track" id="carouselTrack">
-    """
+<div class="section active" id="section1">
+    <h1>Ukens tilbud</h1>
+    <div class="carousel-container">
+        <div class="carousel-track" id="carouselTrack">
+"""
 
     for i in range(0, len(offers), 2):
         html += '<div class="slide">\n'
@@ -201,61 +197,59 @@ def generate_html(offers, image_folder="bilder", video_file="video.mp4"):
         html += '</div>\n'
 
     html += f"""
-            </div>
         </div>
     </div>
+</div>
 
-    <!-- Seksjon 2: Video -->
-    <div class="section video-section" id="section2">
-        {video_tag}
+<div class="section video-section" id="section2">
+    {video_tag}
+</div>
+
+<div class="section gallery-section" id="section3">
+    <div class="gallery">
+        {image_tags}
     </div>
+</div>
 
-    <!-- Seksjon 3: Galleri -->
-    <div class="section gallery-section" id="section3">
-        <div class="gallery">
-            {image_tags}
-        </div>
-    </div>
+<script>
+window.onload = function () {{
+    const track = document.getElementById('carouselTrack');
+    const slides = document.querySelectorAll('.slide');
+    let slideIndex = 0;
 
-    <script>
-        // Karusell
-        const track = document.getElementById('carouselTrack');
-        const slides = document.querySelectorAll('.slide');
-        let slideIndex = 0;
-        setInterval(() => {{
-            slideIndex = (slideIndex + 1) % slides.length;
-            track.style.transform = `translateX(-${{slideIndex * 100}}%)`;
-        }}, 4000);
+    setInterval(() => {{
+        slideIndex = (slideIndex + 1) % slides.length;
+        track.style.transform = `translateX(-${{slideIndex * 100}}%)`;
+    }}, 4000);
 
-        // Seksjonsrotasjon
-        const s1 = document.getElementById('section1');
-        const s2 = document.getElementById('section2');
-        const s3 = document.getElementById('section3');
-        const rotationOrder = [s1, s3, s2, s3];
-        let sectionIndex = 0;
+    const s1 = document.getElementById('section1');
+    const s2 = document.getElementById('section2');
+    const s3 = document.getElementById('section3');
+    const rotationOrder = [s1, s3, s2, s3];
+    let sectionIndex = 0;
 
-        setInterval(() => {{
-            [s1, s2, s3].forEach(s => s.classList.remove('active'));
-            rotationOrder[sectionIndex].classList.add('active');
-            sectionIndex = (sectionIndex + 1) % rotationOrder.length;
-        }}, 8000);
+    const galleryImages = document.querySelectorAll('.gallery-image');
 
-        // Galleri: roter ett og ett bilde
-        const galleryImages = document.querySelectorAll('.gallery img');
-        let galleryIndex = 0;
+    function showRandomGalleryImage() {{
+        galleryImages.forEach(img => img.style.display = 'none');
+        const rand = Math.floor(Math.random() * galleryImages.length);
+        galleryImages[rand].style.display = 'block';
+    }}
 
-        function rotateGalleryImage() {{
-            galleryImages.forEach((img, idx) => {{
-                img.style.display = (idx === galleryIndex) ? 'block' : 'none';
-            }});
-            galleryIndex = (galleryIndex + 1) % galleryImages.length;
+    setInterval(() => {{
+        [s1, s2, s3].forEach(s => s.classList.remove('active'));
+        const currentSection = rotationOrder[sectionIndex];
+        currentSection.classList.add('active');
+
+        if (currentSection === s3 && galleryImages.length > 0) {{
+            showRandomGalleryImage();
         }}
 
-        if (galleryImages.length > 0) {{
-            rotateGalleryImage();
-            setInterval(rotateGalleryImage, 4000);
-        }}
-    </script>
+        sectionIndex = (sectionIndex + 1) % rotationOrder.length;
+    }}, 8000);
+}}
+</script>
+
 </body>
 </html>
 """
