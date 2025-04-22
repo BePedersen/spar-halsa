@@ -6,10 +6,15 @@ def scrape_spar_offers():
     with sync_playwright() as p:
         browser = p.chromium.launch(headless=True)
         page = browser.new_page()
-        page.goto("https://spar.no", timeout=60000)
-        page.wait_for_selector(".product__carousel-container-visible", timeout=60000)
-        html = page.content()
-        browser.close()
+        page.goto("https://spar.no", wait_until="load")
+
+        try:
+            page.wait_for_selector(".product__carousel--container--visible", timeout=15000)
+        except:
+            page.screenshot(path="error_screenshot.png")
+            print("⚠️ Selector not found — saved screenshot for debugging.")
+            return []
+
 
     soup = BeautifulSoup(html, "html.parser")
     offers = []
