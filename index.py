@@ -63,6 +63,9 @@ def generate_html(offers, image_folder="bilder", video_file="video.mp4"):
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="refresh" content="300">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
     <title>SPAR-Visning</title>
     <style>
         * {{ margin: 0; padding: 0; box-sizing: border-box; }}
